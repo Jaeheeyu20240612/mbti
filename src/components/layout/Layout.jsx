@@ -16,9 +16,15 @@ const Layout = ({ children }) => {
         <nav>
           <Link to="/">홈</Link>
           <div className="space-x-4">
-            <Link to="/login">로그인</Link>
+            {user ? (
+              <>
+                <button onClick={handleLogout}>로그아웃</button>
+              </>
+            ) : (
+              <Link to="/login">로그인</Link>
+            )}
           </div>
-          <Link to="/login">회원가입</Link>
+          <Link to="/signup">회원가입</Link>
         </nav>
       </header>
       <main className="container mx-auto pt-10 main">{children}</main>
