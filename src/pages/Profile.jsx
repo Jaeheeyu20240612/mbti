@@ -7,8 +7,7 @@ import styled from "styled-components";
 const Profile = () => {
   const { user, setUser, setIsAuthenticated } = useStore((state) => ({
     user: state.user,
-    setUser: state.setUser,
-    setIsAuthenticated: state.setIsAuthenticated
+    setUser: state.setUser
   }));
 
   const [newNickname, setNewNickname] = useState("");

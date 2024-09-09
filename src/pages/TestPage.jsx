@@ -3,13 +3,15 @@ import TestForm from "../components/TestForm";
 import { calculateMBTI } from "../utils/mbtiCalculator";
 import { createTestResult } from "../api/testResults";
 import { useNavigate } from "react-router-dom";
-import useStore from "../data/store";
 import { UserContext } from "../context/UserContext";
 import { mbtiTypes } from "../data/mbtiTypes";
 
 const Test = () => {
+  const [testResults, setTestResults] = useState([]);
+  const { user } = useContext(UserContext);
+  console.log(user);
   const navigate = useNavigate();
-  const user = useContext(UserContext);
+
   const [resultData, setResultData] = useState(null);
   console.log(user);
   const handleTestSubmit = async (answers) => {
@@ -24,7 +26,7 @@ const Test = () => {
       visibility: true
     };
     console.log(resultData);
-    await createTestResult(newResultData);
+    await createTestResult(newResultData, user);
     setResultData(newResultData);
   };
 

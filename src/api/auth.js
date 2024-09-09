@@ -28,23 +28,40 @@ export const login = async (userData) => {
 // 로그아웃
 export const logout = async () => {
   try {
+    const token = localStorage.getItem("accessToken");
+
+    if (token) {
+      // 서버 로그아웃 요청이 필요한 경우에만 실행
+      try {
+        await axios.post(
+          `${API_URL}/logout`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+      } catch (serverError) {
+        console.error("서버 로그아웃 요청 실패:", serverError);
+      }
+    }
     // 로컬 스토리지에서 토큰 삭제
     localStorage.removeItem("accessToken");
-    // 주스탠드 스토어에서 사용자 정보 삭제
+    // Zustand 스토어에서 사용자 정보 삭제
     useStore.getState().clearUser();
+    console.log("로그아웃 성공");
   } catch (error) {
     console.error("로그아웃 실패:", error);
-    throw error;
+    throw error; // 에러 발생 시 에러를 throw해서 호출한 쪽에서 처리
   }
 };
-
 // 유저 정보 가져오기
 export const getUserProfile = async (token) => {
   if (!token) {
     return;
   }
   try {
-    console.log("서버로 전송하는 토큰:", token); // 토큰 확인
     const response = await axios.get(`${API_URL}/user`, {
       headers: {
         "Content-Type": "application/json",
