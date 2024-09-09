@@ -5,20 +5,15 @@ import styled from "styled-components";
 import useStore from "../../data/store";
 
 const Layout = () => {
-  const { isAuthenticated, setUser } = useStore((state) => ({
-    isAuthenticated: state.isAuthenticated,
-    setUser: state.setUser
-  }));
+  const token = localStorage.getItem("accessToken");
+  console.log(token);
   const navigate = useNavigate();
 
-  // 로그아웃 처리
+  // 로그아웃
   const handleLogout = async () => {
-    try {
-      logout(); // 로컬스토리지 및 Zustand 스토어에서 상태 업데이트
-      setUser(null); // 사용자 정보 초기화
-      navigate("/login"); // 로그인 페이지로 이동
-    } catch (error) {
-      console.error("로그아웃 실패:", error);
+    if (window.confirm("로그아웃하시겠습니까?")) {
+      await logout();
+      navigate("/");
     }
   };
 
@@ -27,12 +22,12 @@ const Layout = () => {
       <header>
         <nav>
           <NavigationDiv>
-            {isAuthenticated ? (
+            {token ? (
               <>
                 <PrivateLinks to="/">홈</PrivateLinks>
+                <PrivateLinks to="/test">테스트</PrivateLinks>
+                <PrivateLinks to="/results">결과보기</PrivateLinks>
                 <PrivateLinks to="/profile">프로필</PrivateLinks>
-                <PrivateLinks to="/test">테스트 페이지</PrivateLinks>
-                <PrivateLinks to="/test-results">테스트 결과 페이지</PrivateLinks>
                 <PrivateLinks to="#" onClick={handleLogout}>
                   로그아웃
                 </PrivateLinks>
@@ -46,10 +41,9 @@ const Layout = () => {
           </NavigationDiv>
         </nav>
       </header>
-      {/* 화면 크기에 따라 헤더와 메인 사이 간격을 동적으로 유지 */}
-      <main className="container mx-auto pt-10 sm:pt-8 md:pt-12 lg:pt-16 main">
+      <Main className="container mx-auto pt-0">
         <Outlet />
-      </main>
+      </Main>
     </div>
   );
 };
@@ -58,20 +52,23 @@ export default Layout;
 
 const NavigationDiv = styled.div`
   display: flex;
-  width: 100%;
   flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 115px;
   background-color: gold;
-  gap: 1em;
 `;
 
 const PublickLinks = styled(Link)`
   width: 50%;
   font-size: 1.2rem;
-  padding: 1.5em;
+  height: 115px;
+  padding-top: 1.5em;
   text-align: center;
   text-decoration: none;
   display: block;
-  transition: 0.5s;
+  margin: aut;
+  transition: 0.4s;
   &:hover {
     color: white;
     background-color: crimson;
@@ -80,9 +77,11 @@ const PublickLinks = styled(Link)`
 `;
 
 const PrivateLinks = styled(Link)`
+  margin: auto;
   width: 20%;
+  height: 115px;
   font-size: 1.2rem;
-  padding: 1.5em;
+  padding-top: 2em;
   text-align: center;
   text-decoration: none;
   display: block;
@@ -92,4 +91,14 @@ const PrivateLinks = styled(Link)`
     background-color: crimson;
     width: 25%;
   }
+`;
+
+const Main = styled.main`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: calc(100vh - 115px);
+  overflow: hidden;
+  margin: auto;
 `;

@@ -54,7 +54,7 @@ const SignupForm = ({ onSubmit }) => {
         required
       />
       <div className="flex flex-row gap-4">
-        <Link to={"/login"}>돌아가기</Link>
+        <Link to={"/login"}>로그인</Link>
         <button type="submit">회원가입</button>
       </div>
     </form>

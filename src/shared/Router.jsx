@@ -23,7 +23,7 @@ const Router = () => {
           <Route path="/" element={<PrivateRoute element={Home} restricted={false} />} />
           <Route path="/profile" element={<PrivateRoute element={Profile} />} />
           <Route path="/test" element={<PrivateRoute element={TestPage} />} />
-          <Route path="/test-results" element={<PrivateRoute element={TestResultPage} />} />
+          <Route path="/results" element={<PrivateRoute element={TestResultPage} />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
