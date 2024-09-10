@@ -1,28 +1,21 @@
 import React from "react";
 import { register } from "../api/auth";
-import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import SignupForm from "../components/SignUpForm";
-import { LoginContainer } from "../components/LoginContainer";
 
 const Signup = () => {
   const navigate = useNavigate();
 
   const handleSignup = async (formData) => {
-    try {
-      await register(formData);
-      alert("회원 가입이 완료되었습니다");
-      navigate("/login"); // 회원가입 성공 후 로그인 페이지로 리다이렉트
-    } catch (error) {
-      console.error("회원가입 실패:", error);
-      alert("회원가입 실패: " + (error.response?.data?.message || "알 수 없는 오류"));
-    }
+    await register(formData);
+    alert("회원 가입이 완료되었습니다");
+    navigate("/login"); // 회원가입 성공 후 로그인 페이지로 리다이렉트
   };
 
   return (
-    <LoginContainer>
+    <div className="flex flex-col justify-center items-center min-h-[70vh] w-full max-w-[400px] border border-gray-300 rounded-lg p-8 mx-auto shadow-md">
       <SignupForm onSubmit={handleSignup} />
-    </LoginContainer>
+    </div>
   );
 };
 

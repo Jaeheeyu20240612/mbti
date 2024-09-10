@@ -3,7 +3,6 @@ import LoginForm from "../components/LoginForm";
 import { login } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 import useStore from "../data/store";
-import { LoginContainer } from "../components/LoginContainer";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -31,9 +30,9 @@ const Login = () => {
   };
 
   return (
-    <LoginContainer className="login-page">
+    <div className="flex flex-col justify-center items-center min-h-[70vh] w-full max-w-[400px] border border-gray-300 rounded-lg p-8 mx-auto shadow-md">
       <LoginForm onSubmit={handleLogin} />
-    </LoginContainer>
+    </div>
   );
 };
 
