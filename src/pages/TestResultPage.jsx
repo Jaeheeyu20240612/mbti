@@ -1,22 +1,23 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { deleteTestResult, getTestResults, updateTestResultVisibility } from "../api/testResults";
 import { mbtiTypes } from "../data/mbtiTypes";
-import { UserContext } from "../context/UserContext";
 import { StyledButton } from "../components/ui/StyledButton";
 import { format } from "date-fns";
 import useStore from "../data/store";
 
 const TestResultPage = () => {
   const [testResults, setTestResults] = useState([]);
-  const { user } = useStore((state) => state);
-  console.log("User Context:", user); // user 전체 출력
-
+  const { user } = useStore.getState();
   useEffect(() => {
     const fetchTestResults = async () => {
-      const results = await getTestResults();
-      // 날짜 최신순 정렬
-      const sortedResults = results.sort((a, b) => new Date(b.date) - new Date(a.date));
-      setTestResults(sortedResults);
+      try {
+        const results = await getTestResults();
+        // 날짜 최신순 정렬
+        const sortedResults = results.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setTestResults(sortedResults);
+      } catch (error) {
+        console.error("테스트 결과를 가져오는 데 실패했습니다:", error);
+      }
     };
 
     fetchTestResults();
@@ -27,7 +28,7 @@ const TestResultPage = () => {
     return foundType ? foundType.description : "설명 없음";
   };
 
-  // 날짜 포맷팅(date-fns이용)
+  // 날짜 포맷팅 (date-fns 이용)
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return format(date, "yyyy-MM-dd HH:mm:ss");
@@ -35,9 +36,13 @@ const TestResultPage = () => {
 
   const handleDelete = async (id) => {
     if (window.confirm("결과를 삭제하시겠습니까?")) {
-      await deleteTestResult(id);
-      // 삭제 후 상태 업데이트
-      setTestResults((prev) => prev.filter((result) => result.id !== id));
+      try {
+        await deleteTestResult(id);
+        // 삭제 후 상태 업데이트
+        setTestResults((prev) => prev.filter((result) => result.id !== id));
+      } catch (error) {
+        console.error("테스트 결과 삭제에 실패했습니다:", error);
+      }
     }
   };
 
@@ -47,10 +52,11 @@ const TestResultPage = () => {
       // 상태 업데이트
       setTestResults((prev) => prev.map((result) => (result.id === id ? { ...result, visibility: true } : result)));
     } catch (error) {
-      console.error("Failed to update test result visibility", error);
+      console.error("테스트 결과 공개 전환에 실패했습니다:", error);
     }
   };
-
+  console.log(user);
+  console.log(testResults);
   return (
     <div className="flex flex-col justify-center items-center gap-y-5 mt-5">
       {testResults.map((t) => (
@@ -63,7 +69,7 @@ const TestResultPage = () => {
           <p>{t.result}</p>
           <br />
           <p className="mb-5">{getTypeDescription(t.result)}</p>
-          {user.userId === t.userId ? (
+          {user?.id === t.userId ? (
             <div>
               {t.visibility ? null : (
                 <StyledButton
@@ -75,8 +81,6 @@ const TestResultPage = () => {
                 </StyledButton>
               )}
               <StyledButton color="gold" onClick={() => handleDelete(t.id)}>
-                {" "}
-                {/* 삭제 클릭 시 handleDelete 호출 */}
                 삭제
               </StyledButton>
             </div>

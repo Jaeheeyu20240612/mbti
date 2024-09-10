@@ -3,13 +3,12 @@ import defaultProfile from "../assets/defaultProfile.jpg";
 import { getUserProfile, updateProfile } from "../api/auth";
 import useStore from "../data/store";
 import styled from "styled-components";
+import { json } from "react-router-dom";
 
 const Profile = () => {
-  const { user, setUser, setIsAuthenticated } = useStore((state) => ({
-    user: state.user,
-    setUser: state.setUser
-  }));
-
+  const { user } = useStore.getState();
+  const setUser = useStore((state) => state.setUser);
+  console.log(user);
   const [newNickname, setNewNickname] = useState("");
   const [file, setFile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -18,7 +17,11 @@ const Profile = () => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem("accessToken");
-        if (token) {
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        if (user) {
+          setUser(user);
+        } else if (token) {
           const userData = await getUserProfile(token);
           setUser({
             userId: userData.id,
@@ -28,12 +31,11 @@ const Profile = () => {
         }
       } catch (error) {
         console.error("사용자 데이터 로딩 실패:", error);
-        // setIsAuthenticated(false);
       }
     };
 
     fetchUserData();
-  }, [setUser, setIsAuthenticated]);
+  }, [setUser]);
 
   const handleInputChange = (e) => {
     setNewNickname(e.target.value);
@@ -48,7 +50,7 @@ const Profile = () => {
     try {
       const updatedUserData = await updateProfile(file, newNickname);
 
-      if (updatedUserData.success) {
+      if (updatedUserData) {
         setUser({
           ...user,
           nickname: updatedUserData.nickname || user.nickname,
@@ -57,8 +59,6 @@ const Profile = () => {
         setNewNickname("");
         setFile(null);
         setIsEditing(false);
-      } else {
-        console.error("프로필 업데이트에 실패했습니다:", updatedUserData.message);
       }
     } catch (error) {
       console.error("프로필 업데이트 실패:", error);

@@ -1,37 +1,35 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import TestForm from "../components/TestForm";
 import { calculateMBTI } from "../utils/mbtiCalculator";
 import { createTestResult } from "../api/testResults";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../context/UserContext";
 import { mbtiTypes } from "../data/mbtiTypes";
+import useStore from "../data/store";
 
 const Test = () => {
   const [testResults, setTestResults] = useState([]);
-  const { user } = useContext(UserContext);
-  console.log(user);
-  const navigate = useNavigate();
-
   const [resultData, setResultData] = useState(null);
+  const navigate = useNavigate();
+  const { user } = useStore.getState();
+  const setUser = useStore((state) => state.setUser);
   console.log(user);
+
   const handleTestSubmit = async (answers) => {
     const result = calculateMBTI(answers);
-
     const newResultData = {
       userId: user.userId,
       nickname: user.nickname,
       result,
       answers,
       date: new Date().toISOString(),
-      visibility: true
+      visibility: false
     };
-    console.log(resultData);
+    console.log(result);
     await createTestResult(newResultData, user);
     setResultData(newResultData);
   };
 
   console.log(resultData);
-
   if (resultData) {
     let filtered = null;
     filtered = mbtiTypes.find((type) => type.type === resultData.result);
