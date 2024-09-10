@@ -8,18 +8,13 @@ import useStore from "../data/store";
 const TestResultPage = () => {
   const [testResults, setTestResults] = useState([]);
   const { user } = useStore.getState();
+
   useEffect(() => {
     const fetchTestResults = async () => {
-      try {
-        const results = await getTestResults();
-        // 날짜 최신순 정렬
-        const sortedResults = results.sort((a, b) => new Date(b.date) - new Date(a.date));
-        setTestResults(sortedResults);
-      } catch (error) {
-        console.error("테스트 결과를 가져오는 데 실패했습니다:", error);
-      }
+      const results = await getTestResults();
+      const sortedResults = results.sort((a, b) => new Date(b.date) - new Date(a.date));
+      setTestResults(sortedResults);
     };
-
     fetchTestResults();
   }, []);
 
@@ -38,7 +33,7 @@ const TestResultPage = () => {
     if (window.confirm("결과를 삭제하시겠습니까?")) {
       try {
         await deleteTestResult(id);
-        // 삭제 후 상태 업데이트
+        await getTestResults();
         setTestResults((prev) => prev.filter((result) => result.id !== id));
       } catch (error) {
         console.error("테스트 결과 삭제에 실패했습니다:", error);
@@ -69,7 +64,7 @@ const TestResultPage = () => {
           <p>{t.result}</p>
           <br />
           <p className="mb-5">{getTypeDescription(t.result)}</p>
-          {user?.id === t.userId ? (
+          {user && user.id === t.userId ? (
             <div>
               {t.visibility ? null : (
                 <StyledButton

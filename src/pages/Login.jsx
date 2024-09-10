@@ -3,12 +3,11 @@ import LoginForm from "../components/LoginForm";
 import { login } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 import useStore from "../data/store";
-import { SignContainer } from "../components/ui/signContainer";
+import { LoginContainer } from "../components/LoginContainer";
 
 const Login = () => {
   const navigate = useNavigate();
   const setUser = useStore((state) => state.setUser);
-  const user = useStore((state) => state.user);
 
   const handleLogin = async (formData) => {
     try {
@@ -32,9 +31,9 @@ const Login = () => {
   };
 
   return (
-    <SignContainer className="login-page">
+    <LoginContainer className="login-page">
       <LoginForm onSubmit={handleLogin} />
-    </SignContainer>
+    </LoginContainer>
   );
 };
 

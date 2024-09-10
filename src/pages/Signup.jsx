@@ -3,7 +3,7 @@ import { register } from "../api/auth";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import SignupForm from "../components/SignUpForm";
-import { SignContainer } from "../components/ui/signContainer";
+import { LoginContainer } from "../components/LoginContainer";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -20,9 +20,9 @@ const Signup = () => {
   };
 
   return (
-    <SignContainer>
+    <LoginContainer>
       <SignupForm onSubmit={handleSignup} />
-    </SignContainer>
+    </LoginContainer>
   );
 };
 

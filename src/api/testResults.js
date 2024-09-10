@@ -10,16 +10,15 @@ export const getTestResults = async () => {
 };
 
 export const createTestResult = async (resultData) => {
-  const token = localStorage.getItem("accessToken");
   const { user } = useStore.getState();
   try {
     const response = await axios.post(API_URL, {
       ...resultData,
+      userId: user.id,
       nickname: user.nickname, // 현재 사용자 닉네임 사용
       visibility: false // 기본적으로 자신만 볼 수 있도록 설정
     });
-    console.log(response.data);
-    getTestResults();
+    await getTestResults();
     return response.data;
   } catch (error) {
     console.error("테스트 결과 생성 실패:", error);
