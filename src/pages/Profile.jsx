@@ -1,99 +1,48 @@
-import React, { useEffect, useState } from "react";
-import defaultProfile from "../assets/defaultProfile.jpg";
-import { getUserProfile, updateProfile } from "../api/auth";
-import useStore from "../data/store";
+import React, { useContext, useState } from "react";
+import { UserContext } from "../context/UserContext";
+import { updateProfile } from "../api/auth";
 import styled from "styled-components";
-import { json } from "react-router-dom";
 
 const Profile = () => {
-  const { user } = useStore.getState();
-  const setUser = useStore((state) => state.setUser);
-  console.log(user);
-  const [newNickname, setNewNickname] = useState("");
-  const [file, setFile] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const { user, setUser } = useContext(UserContext);
+  const token = user?.accessToken;
+  const [nickname, setNickname] = useState(user?.nickname || "");
+  const [avatar, setAvatar] = useState(null);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem("accessToken");
-        const user = JSON.parse(localStorage.getItem("user"));
-
-        if (user) {
-          setUser(user);
-        } else if (token) {
-          const userData = await getUserProfile(token);
-          setUser({
-            userId: userData.id,
-            nickname: userData.nickname,
-            avatar: userData.avatar
-          });
-        }
-      } catch (error) {
-        console.error("사용자 데이터 로딩 실패:", error);
-      }
-    };
-
-    fetchUserData();
-  }, [setUser]);
-
-  const handleInputChange = (e) => {
-    setNewNickname(e.target.value);
-  };
-
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const handleProfileUpdate = async (e) => {
+  const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    try {
-      const updatedUserData = await updateProfile(file, newNickname);
 
-      if (updatedUserData) {
-        setUser({
-          ...user,
-          nickname: updatedUserData.nickname || user.nickname,
-          avatar: updatedUserData.avatar || user.avatar
-        });
-        setNewNickname("");
-        setFile(null);
-        setIsEditing(false);
-      }
-    } catch (error) {
-      console.error("프로필 업데이트 실패:", error);
-    }
+    const updatedProfile = await updateProfile(avatar, nickname, token);
+    setUser((prev) => ({
+      ...prev,
+      avatar: updatedProfile.avatar,
+      nickname: updatedProfile.nickname
+    }));
   };
   return (
-    <ProfileDiv>
-      <div className="flex flex-col items-center">
-        <p className="text-2xl">Profile</p>
-        <img className="w-72 h-72 object-cover" src={user?.avatar ? user.avatar : defaultProfile} alt="Profile" />
-        <div className="flex flex-row justify-between items-center w-full max-w-md">
-          <p>닉네임: {user?.nickname}</p>
-          <button onClick={() => setIsEditing(true)} className=" text-white py-2 px-4 rounded">
-            ✒️
-          </button>
+    <div className="w-3/5 flex flex-col justify-center items-center">
+      <ProfileDiv className="flex flex-col">
+        Mypage
+        <img className="w-60 h-60" src={user?.avatar} alt="" />
+        <p className="mb-3">닉네임 : {user?.nickname}</p>
+        <div>
+          <form className="flex flex-col mb-4" onSubmit={handleUpdateProfile}>
+            <input
+              onChange={(e) => setNickname(e.target.value)}
+              className="bg-slate-600 text-gray-400 mb-4"
+              placeholder="수정할 닉네임을 작성해주세요"
+              type="text"
+            />
+            <input
+              onChange={(e) => setAvatar(e.target.files[0])}
+              className="bg-slate-600 text-gray-400 mb-4"
+              type="file"
+            />
+            <button className="text-center">수정</button>
+          </form>
         </div>
-      </div>
-
-      {/* 모달 */}
-      {isEditing && (
-        <ModalContainer>
-          <ModalContent>
-            <h2>프로필 수정</h2>
-            <form onSubmit={handleProfileUpdate}>
-              <input type="text" value={newNickname} onChange={handleInputChange} placeholder="새 닉네임" />
-              <input type="file" onChange={handleFileChange} accept="image/*" />
-              <button type="submit">저장</button>
-              <button type="button" onClick={() => setIsEditing(false)}>
-                취소
-              </button>
-            </form>
-          </ModalContent>
-        </ModalContainer>
-      )}
-    </ProfileDiv>
+      </ProfileDiv>
+    </div>
   );
 };
 

@@ -15,6 +15,7 @@ const TestForm = ({ onSubmit }) => {
     e.preventDefault();
     onSubmit(answers);
   };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-gray-100 w-auto rounded shadow-md">
       {questions.map((q, index) => (

@@ -1,17 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { BrowserRouter, useNavigate } from "react-router-dom";
 import { useStore } from "zustand";
+import { UserContext } from "../context/UserContext";
 
 const Home = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem("accessToken");
+  const { user } = useContext(UserContext);
 
   const handleButtonClick = () => {
-    if (!token) {
+    if (user.success === false) {
       alert("로그인페이지로 이동합니다.");
       navigate("/login");
       return;
-    } else if (token) {
+    } else {
       navigate("/test");
     }
   };

@@ -1,18 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import TestForm from "../components/TestForm";
 import { calculateMBTI } from "../utils/mbtiCalculator";
-import { createTestResult } from "../api/testResults";
 import { useNavigate } from "react-router-dom";
 import { mbtiTypes } from "../data/mbtiTypes";
-import useStore from "../data/store";
+import { UserContext } from "../context/UserContext";
+import axios from "axios";
+import { getTestResults } from "../api/testResults";
 
 const Test = () => {
-  const [testResults, setTestResults] = useState([]);
   const [resultData, setResultData] = useState(null);
   const navigate = useNavigate();
-  const { user } = useStore.getState();
-  const setUser = useStore((state) => state.setUser);
-  console.log(user);
+  const { user } = useContext(UserContext);
+
+  const createTestResult = async (resultData) => {
+    const response = await axios.post("http://localhost:5000/testResults", {
+      ...resultData,
+      userId: user.userId,
+      nickname: user.nickname, // 현재 사용자 닉네임 사용
+      visibility: false // 기본적으로 자신만 볼 수 있도록 설정
+    });
+    await getTestResults();
+    return response.data;
+  };
 
   const handleTestSubmit = async (answers) => {
     const result = calculateMBTI(answers);
@@ -24,12 +33,11 @@ const Test = () => {
       date: new Date().toISOString(),
       visibility: false
     };
-    console.log(result);
-    await createTestResult(newResultData, user);
+
+    await createTestResult(newResultData);
     setResultData(newResultData);
   };
 
-  console.log(resultData);
   if (resultData) {
     let filtered = null;
     filtered = mbtiTypes.find((type) => type.type === resultData.result);

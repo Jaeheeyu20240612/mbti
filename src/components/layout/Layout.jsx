@@ -1,33 +1,31 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { logout } from "../../api/auth";
 import styled from "styled-components";
-import useStore from "../../data/store";
+import { UserContext } from "../../context/UserContext";
 
-const Layout = () => {
-  const token = localStorage.getItem("accessToken");
-  console.log(token);
+export const Layout = () => {
+  const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
+  // 이곳에서 로그인 하지 않은 사용자를 login 페이지로 보내줄 거에요.
+  useEffect(() => {}, []);
 
-  // 로그아웃
-  const handleLogout = async () => {
-    if (window.confirm("로그아웃하시겠습니까?")) {
-      await logout();
-      navigate("/");
-    }
+  const handleLogout = () => {
+    setUser(null);
+    window.confirm("로그아웃하시겠습니까?");
+    navigate("/");
+    return;
   };
-
   return (
     <div>
       <header>
         <nav>
           <NavigationDiv>
-            {token ? (
+            {user?.success === true ? (
               <>
                 <PrivateLinks to="/">홈</PrivateLinks>
                 <PrivateLinks to="/test">테스트</PrivateLinks>
                 <PrivateLinks to="/results">결과보기</PrivateLinks>
-                <PrivateLinks to="/profile">프로필</PrivateLinks>
+                <PrivateLinks to="/mypage">마이페이지</PrivateLinks>
                 <PrivateLinks to="#" onClick={handleLogout}>
                   로그아웃
                 </PrivateLinks>
@@ -49,7 +47,6 @@ const Layout = () => {
 };
 
 export default Layout;
-
 const NavigationDiv = styled.div`
   display: flex;
   flex-direction: row;
