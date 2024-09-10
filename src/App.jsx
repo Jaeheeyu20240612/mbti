@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Router from "./shared/Router";
 import { UserProvider } from "./context/UserContext";
 

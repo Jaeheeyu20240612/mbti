@@ -7,13 +7,18 @@ export const Layout = () => {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   // 이곳에서 로그인 하지 않은 사용자를 login 페이지로 보내줄 거에요.
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (!user?.success) {
+      navigate("/login");
+    }
+  }, [user]);
 
   const handleLogout = () => {
-    setUser(null);
-    window.confirm("로그아웃하시겠습니까?");
-    navigate("/");
-    return;
+    if (window.confirm("로그아웃하시겠습니까?")) {
+      setUser(null);
+      localStorage.removeItem("token");
+      navigate("/login");
+    }
   };
   return (
     <div>

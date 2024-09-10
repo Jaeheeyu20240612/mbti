@@ -5,9 +5,10 @@ import styled from "styled-components";
 
 const Profile = () => {
   const { user, setUser } = useContext(UserContext);
-  const token = user?.accessToken;
+  const token = localStorage.getItem("token");
   const [nickname, setNickname] = useState(user?.nickname || "");
   const [avatar, setAvatar] = useState(null);
+  console.log(token);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -29,13 +30,13 @@ const Profile = () => {
           <form className="flex flex-col mb-4" onSubmit={handleUpdateProfile}>
             <input
               onChange={(e) => setNickname(e.target.value)}
-              className="bg-slate-600 text-gray-400 mb-4"
+              className="bg-transparent text-gray-400 mb-4 shadow-lg"
               placeholder="수정할 닉네임을 작성해주세요"
               type="text"
             />
             <input
               onChange={(e) => setAvatar(e.target.files[0])}
-              className="bg-slate-600 text-gray-400 mb-4"
+              className="bg-transparent text-gray-400 mb-4 shadow-lg"
               type="file"
             />
             <button className="text-center">수정</button>
