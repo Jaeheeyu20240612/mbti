@@ -8,9 +8,13 @@ const Home = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const user = queryClient.getQueryData("users");
-
+  const token = localStorage.getItem("users");
+  // const { data: user } = useQuery({
+  //   queryKey: ["users"],
+  //   queryFn: () => getUserProfile(token)
+  // });
   const handleButtonClick = () => {
-    if (user.success === false) {
+    if (token) {
       alert("로그인페이지로 이동합니다.");
       navigate("/login");
       return;

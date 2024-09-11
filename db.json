@@ -2131,6 +2131,64 @@
       ],
       "date": "2024-09-11T10:05:35.522Z",
       "visibility": true
+    },
+    {
+      "id": "559a",
+      "nickname": "dtd",
+      "result": "INFP",
+      "answers": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        "아니오"
+      ],
+      "date": "2024-09-11T11:07:42.544Z",
+      "visibility": true
+    },
+    {
+      "id": "5b66",
+      "nickname": "dtd",
+      "result": "INFP",
+      "answers": [
+        "아니오",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "date": "2024-09-11T11:08:41.144Z",
+      "visibility": true
     }
   ]
 }

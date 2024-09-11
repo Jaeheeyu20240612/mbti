@@ -1,14 +1,19 @@
 import React, { useContext, useEffect } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { UserContext } from "../../context/UserContext";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getUserProfile } from "../../api/auth";
 
 export const Layout = () => {
-  const queryClient = useQueryClient();
-  const userData = queryClient.getQueryData("users");
-  const accessToken = userData?.accessToken;
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const token = localStorage.getItem("token");
+  const { data: user } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => getUserProfile(token),
+    // 토큰이 있는 경우에만 쿼리 실행
+    enabled: !!token
+  });
 
   // 이곳에서 로그인 하지 않은 사용자를 login 페이지로 보내줄 거에요.
   const handleLogout = () => {
@@ -24,7 +29,7 @@ export const Layout = () => {
       <header>
         <nav>
           <NavigationDiv>
-            {!accessToken ? (
+            {!token ? (
               <>
                 <PublickLinks to="/">홈</PublickLinks>
                 <PublickLinks to="/login">로그인</PublickLinks>

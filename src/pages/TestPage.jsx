@@ -5,13 +5,18 @@ import { useNavigate } from "react-router-dom";
 import { mbtiTypes } from "../data/mbtiTypes";
 import axios from "axios";
 import { getTestResults } from "../api/testResults";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getUserProfile } from "../api/auth";
 
 const Test = () => {
   const [resultData, setResultData] = useState(null);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const user = queryClient.getQueryData("users");
+
+  const token = localStorage.getItem("users");
+  const { data: user } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => getUserProfile(token)
+  });
 
   const createTestResult = async (resultData) => {
     const response = await axios.post("http://localhost:5000/testResults", {
