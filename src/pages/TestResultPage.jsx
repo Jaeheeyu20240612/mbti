@@ -47,7 +47,7 @@ const TestResultPage = () => {
     try {
       await updateTestResultVisibility(id, true); // 비공개로 전환
       // 상태 업데이트
-      setTestResults((prev) => prev.map((result) => (result.id === id ? { ...result, visibility: true } : result)));
+      setTestResults((prev) => prev.map((result) => (result.id === id ? { ...result, visibility: false } : result)));
     } catch (error) {
       console.error("테스트 결과 공개 전환에 실패했습니다:", error);
     }

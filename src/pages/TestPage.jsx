@@ -43,19 +43,7 @@ const Test = () => {
     await createTestResult(newResultData);
     setResultData(newResultData);
   };
-  console.log(resultData);
-  // const { data, isPending, isError } = useQuery({
-  //   queryKey: ["testResults"],
-  //   queryFn: () =>
-  //     axios
-  //       .get("http://localhost:5000/testResults", {
-  //         headers: {
-  //           Authorization: `Bearer ${user.token}`
-  //         }
-  //       })
-  //       .then((res) => res.data)
-  // });
-  // const mutation = useMutaion({})
+
   if (resultData) {
     let filtered = null;
     filtered = mbtiTypes.find((type) => type.type === resultData.result);
@@ -63,7 +51,7 @@ const Test = () => {
 
     return (
       <div className="max-w-md mx-auto mt-10">
-        <h1 className="text-2xl font-bold mb-4">테스트 결과</h1>
+        <h1 className="text-2xl font-bold m-auto">테스트 결과</h1>
         <div>
           <p>닉네임: {resultData.nickname}</p>
           <p>결과: {resultData.result}</p>
