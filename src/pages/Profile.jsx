@@ -1,23 +1,33 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUserProfile, updateProfile } from "../api/auth";
 import styled from "styled-components";
 
 const Profile = () => {
   const queryClient = useQueryClient();
-  const user = queryClient.getQueryData("users");
-  const token = user?.accessToken;
+  const token = localStorage.getItem("token");
+
   const [formData, setFormData] = useState({
     avatar: null,
     nickname: ""
   });
 
-  const { mutate } = useMutation({
+  const { data: user } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => getUserProfile(token)
+  });
+
+  const { mutateAsync, isError } = useMutation({
     mutationFn: ({ newAvatar, newNickname, token }) => updateProfile(newAvatar, newNickname, token),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("프로필 업데이트 성공:", data);
       queryClient.invalidateQueries(["users"]);
     }
   });
+
+  if (isError) {
+    console.log(isError);
+  }
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
@@ -27,22 +37,13 @@ const Profile = () => {
     }));
   };
 
-  //
-  const handleUpdateProfile = (e) => {
+  console.log(formData);
+  const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    if (!user?.accessToken) {
+    if (!token) {
       return;
     }
-    console.log("업데이틀할 프로필 자료:", {
-      newAvatar: formData.avatar,
-      newNickname: formData.nickname,
-      token: token
-    });
-    mutate({
-      newAvatar: formData.avatar,
-      newNickname: formData.nickname,
-      token: token
-    });
+    await mutateAsync({ newAvatar: formData.avatar, newNickname: formData.nickname, token });
   };
 
   return (

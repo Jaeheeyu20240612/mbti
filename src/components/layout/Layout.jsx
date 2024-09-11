@@ -14,6 +14,7 @@ export const Layout = () => {
   const handleLogout = () => {
     if (window.confirm("로그아웃하시겠습니까?")) {
       queryClient.removeQueries("users");
+      localStorage.removeItem("token");
       navigate("/login");
     }
   };

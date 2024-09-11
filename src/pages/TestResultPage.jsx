@@ -8,18 +8,18 @@ import { useQueryClient } from "@tanstack/react-query";
 const TestResultPage = () => {
   const [testResults, setTestResults] = useState([]);
   const queryClient = useQueryClient();
-  const user = queryClient.getQueriesData("users");
+  const user = queryClient.getQueryData("users");
 
   useEffect(() => {
     const fetchTestResults = async () => {
       const results = await getTestResults();
-      console.log(results);
       const sortedResults = results.sort((a, b) => new Date(b.date) - new Date(a.date));
       setTestResults(sortedResults);
     };
     fetchTestResults();
   }, []);
 
+  console.log(testResults);
   const getTypeDescription = (type) => {
     const foundType = mbtiTypes.find((item) => item.type === type);
     if (foundType) {
@@ -43,11 +43,9 @@ const TestResultPage = () => {
     }
   };
 
-  console.log(testResults);
-
   const handleVisibilityChange = async (id) => {
     try {
-      await updateTestResultVisibility(id, true); // 공개로 전환
+      await updateTestResultVisibility(id, true); // 비공개로 전환
       // 상태 업데이트
       setTestResults((prev) => prev.map((result) => (result.id === id ? { ...result, visibility: true } : result)));
     } catch (error) {
@@ -55,6 +53,7 @@ const TestResultPage = () => {
     }
   };
 
+  console.log(testResults);
   return (
     <div className="flex flex-col justify-center items-center gap-y-5 mt-5">
       {testResults.map((t) =>
@@ -72,7 +71,7 @@ const TestResultPage = () => {
               {user?.userId === t.userId && (
                 <div>
                   <StyledButton onClick={() => handleVisibilityChange(t.id)} className="mr-3" color="crimson">
-                    공개로 전환
+                    비공개로 전환
                   </StyledButton>
                   <StyledButton color="gold" onClick={() => handleDelete(t.id)}>
                     삭제

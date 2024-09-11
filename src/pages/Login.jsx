@@ -13,6 +13,8 @@ const Login = () => {
       const loginData = await login(userData);
       // 로그인 성공 후, 유저 정보를 'users' 쿼리 키에 저장
       queryClient.setQueryData("users", loginData);
+      console.log(loginData.accessToken);
+      localStorage.setItem("token", loginData.accessToken);
       return loginData;
     },
     onSuccess: async () => {

@@ -11,14 +11,14 @@ const Test = () => {
   const [resultData, setResultData] = useState(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const user = queryClient.getQueriesData("users");
+  const user = queryClient.getQueryData("users");
 
   const createTestResult = async (resultData) => {
     const response = await axios.post("http://localhost:5000/testResults", {
       ...resultData,
       userId: user.userId,
       nickname: user.nickname, // 현재 사용자 닉네임 사용
-      visibility: false // 기본적으로 자신만 볼 수 있도록 설정
+      visibility: true // 기본적으로 자신만 볼 수 있도록 설정
     });
     await getTestResults();
     return response.data;
@@ -32,13 +32,13 @@ const Test = () => {
       result,
       answers,
       date: new Date().toISOString(),
-      visibility: false
+      visibility: true
     };
 
     await createTestResult(newResultData);
     setResultData(newResultData);
   };
-
+  console.log(resultData);
   // const { data, isPending, isError } = useQuery({
   //   queryKey: ["testResults"],
   //   queryFn: () =>
@@ -50,13 +50,12 @@ const Test = () => {
   //       })
   //       .then((res) => res.data)
   // });
-
   // const mutation = useMutaion({})
-
   if (resultData) {
     let filtered = null;
     filtered = mbtiTypes.find((type) => type.type === resultData.result);
     console.log(filtered);
+
     return (
       <div className="max-w-md mx-auto mt-10">
         <h1 className="text-2xl font-bold mb-4">테스트 결과</h1>
