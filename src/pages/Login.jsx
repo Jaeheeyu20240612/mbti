@@ -1,9 +1,7 @@
 import AuthForm from "../components/authForm";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import { getUserProfile, login } from "../api/auth";
-import { useContext } from "react";
-import { UserContext } from "../context/UserContext";
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
+import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
+import { login } from "../api/auth";
 const Login = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();

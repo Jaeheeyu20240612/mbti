@@ -1,7 +1,4 @@
-import React, { useContext } from "react";
-import { BrowserRouter, useNavigate } from "react-router-dom";
-import { useStore } from "zustand";
-import { UserContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
 const Home = () => {
