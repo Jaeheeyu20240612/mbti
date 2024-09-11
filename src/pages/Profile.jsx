@@ -1,49 +1,75 @@
-import React, { useContext, useState } from "react";
-import { UserContext } from "../context/UserContext";
-import { updateProfile } from "../api/auth";
+import React, { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getUserProfile, updateProfile } from "../api/auth";
 import styled from "styled-components";
 
 const Profile = () => {
-  const { user, setUser } = useContext(UserContext);
-  const token = localStorage.getItem("token");
-  const [nickname, setNickname] = useState(user?.nickname || "");
-  const [avatar, setAvatar] = useState(null);
-  console.log(token);
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData("users");
+  const token = user?.accessToken;
+  const [formData, setFormData] = useState({
+    avatar: null,
+    nickname: ""
+  });
 
-  const handleUpdateProfile = async (e) => {
-    e.preventDefault();
+  const { mutate } = useMutation({
+    mutationFn: ({ newAvatar, newNickname, token }) => updateProfile(newAvatar, newNickname, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]);
+    }
+  });
 
-    const updatedProfile = await updateProfile(avatar, nickname, token);
-    setUser((prev) => ({
-      ...prev,
-      avatar: updatedProfile.avatar,
-      nickname: updatedProfile.nickname
+  const handleInputChange = (e) => {
+    const { name, value, files } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: name === "avatar" ? files[0] : value
     }));
   };
+
+  //
+  const handleUpdateProfile = (e) => {
+    e.preventDefault();
+    if (!user?.accessToken) {
+      return;
+    }
+    console.log("업데이틀할 프로필 자료:", {
+      newAvatar: formData.avatar,
+      newNickname: formData.nickname,
+      token: token
+    });
+    mutate({
+      newAvatar: formData.avatar,
+      newNickname: formData.nickname,
+      token: token
+    });
+  };
+
   return (
-    <div className="w-3/5 flex flex-col justify-center items-center">
-      <ProfileDiv className="flex flex-col">
-        Mypage
-        <img className="w-60 h-60" src={user?.avatar} alt="" />
-        <p className="mb-3">닉네임 : {user?.nickname}</p>
-        <div>
-          <form className="flex flex-col mb-4" onSubmit={handleUpdateProfile}>
-            <input
-              onChange={(e) => setNickname(e.target.value)}
-              className="bg-transparent text-gray-400 mb-4 shadow-lg"
-              placeholder="수정할 닉네임을 작성해주세요"
-              type="text"
-            />
-            <input
-              onChange={(e) => setAvatar(e.target.files[0])}
-              className="bg-transparent text-gray-400 mb-4 shadow-lg"
-              type="file"
-            />
-            <button className="text-center">수정</button>
-          </form>
-        </div>
-      </ProfileDiv>
-    </div>
+    <ProfileDiv>
+      <h1>Mypage</h1>
+      <img className="w-60 h-60" src={user?.avatar} alt="User Avatar" />
+      <p className="mb-3">닉네임 : {user?.nickname}</p>
+      <form className="flex flex-col mb-4" onSubmit={handleUpdateProfile}>
+        <input
+          name="nickname"
+          onChange={handleInputChange}
+          className="bg-transparent text-gray-400 mb-4 shadow-lg"
+          placeholder="수정할 닉네임을 작성해주세요"
+          type="text"
+          value={formData.nickname}
+        />
+        <input
+          name="avatar"
+          onChange={handleInputChange}
+          className="bg-transparent text-gray-400 mb-4 shadow-lg"
+          type="file"
+        />
+        <button type="submit" className="text-center">
+          수정
+        </button>
+      </form>
+    </ProfileDiv>
   );
 };
 
@@ -51,54 +77,19 @@ export default Profile;
 
 const ProfileDiv = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
   min-height: calc(100vh - 115px);
   overflow: hidden;
   margin: auto;
-`;
 
-const ModalContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
+  .w-60 {
+    width: 240px;
+  }
 
-const ModalContent = styled.div`
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 300px;
-  text-align: center;
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  input[type="text"],
-  input[type="file"] {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  button {
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    &:first-of-type {
-      background: #007bff;
-      color: white;
-    }
-    &:last-of-type {
-      background: #ccc;
-    }
+  .h-60 {
+    height: 240px;
   }
 `;

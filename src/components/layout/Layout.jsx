@@ -2,30 +2,35 @@ import React, { useContext, useEffect } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { UserContext } from "../../context/UserContext";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const Layout = () => {
-  const { user, setUser } = useContext(UserContext);
+  const queryClient = useQueryClient();
+  const userData = queryClient.getQueryData("users");
+  const accessToken = userData?.accessToken;
   const navigate = useNavigate();
-  // 이곳에서 로그인 하지 않은 사용자를 login 페이지로 보내줄 거에요.
-  useEffect(() => {
-    if (!user?.success) {
-      navigate("/login");
-    }
-  }, [user]);
 
+  // 이곳에서 로그인 하지 않은 사용자를 login 페이지로 보내줄 거에요.
   const handleLogout = () => {
     if (window.confirm("로그아웃하시겠습니까?")) {
-      setUser(null);
-      localStorage.removeItem("token");
+      queryClient.removeQueries("users");
       navigate("/login");
     }
   };
+
+  console.log(userData);
+
   return (
     <div>
       <header>
         <nav>
           <NavigationDiv>
-            {user?.success === true ? (
+            {!accessToken ? (
+              <>
+                <PublickLinks to="/">홈</PublickLinks>
+                <PublickLinks to="/login">로그인</PublickLinks>
+              </>
+            ) : (
               <>
                 <PrivateLinks to="/">홈</PrivateLinks>
                 <PrivateLinks to="/test">테스트</PrivateLinks>
@@ -34,11 +39,6 @@ export const Layout = () => {
                 <PrivateLinks to="#" onClick={handleLogout}>
                   로그아웃
                 </PrivateLinks>
-              </>
-            ) : (
-              <>
-                <PublickLinks to="/">홈</PublickLinks>
-                <PublickLinks to="/login">로그인</PublickLinks>
               </>
             )}
           </NavigationDiv>
@@ -52,6 +52,7 @@ export const Layout = () => {
 };
 
 export default Layout;
+
 const NavigationDiv = styled.div`
   display: flex;
   flex-direction: row;

@@ -3,9 +3,8 @@ import axios from "axios";
 const API_URL = "https://moneyfulpublicpolicy.co.kr";
 
 export const register = async (userData) => {
-  const response = await axios.post(`${API_URL}/register`, userData);
-  console.log(response.data);
-  return response.data;
+  const { data } = await axios.post(`${API_URL}/register`, userData);
+  return data;
 };
 
 export const login = async (userData) => {
@@ -16,11 +15,10 @@ export const login = async (userData) => {
 export const getUserProfile = async (token) => {
   const { data } = await axios.get(`${API_URL}/user`, {
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
     }
   });
-  console.log(data);
+  return data;
 };
 
 export const updateProfile = async (newAvatar, newNickname, token) => {
@@ -38,6 +36,5 @@ export const updateProfile = async (newAvatar, newNickname, token) => {
       Authorization: `Bearer ${token}`
     }
   });
-  getUserProfile();
   return data;
 };

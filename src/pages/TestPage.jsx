@@ -1,16 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import TestForm from "../components/TestForm";
 import { calculateMBTI } from "../utils/mbtiCalculator";
 import { useNavigate } from "react-router-dom";
 import { mbtiTypes } from "../data/mbtiTypes";
-import { UserContext } from "../context/UserContext";
 import axios from "axios";
 import { getTestResults } from "../api/testResults";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Test = () => {
   const [resultData, setResultData] = useState(null);
   const navigate = useNavigate();
-  const { user } = useContext(UserContext);
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueriesData("users");
 
   const createTestResult = async (resultData) => {
     const response = await axios.post("http://localhost:5000/testResults", {
@@ -37,6 +38,20 @@ const Test = () => {
     await createTestResult(newResultData);
     setResultData(newResultData);
   };
+
+  // const { data, isPending, isError } = useQuery({
+  //   queryKey: ["testResults"],
+  //   queryFn: () =>
+  //     axios
+  //       .get("http://localhost:5000/testResults", {
+  //         headers: {
+  //           Authorization: `Bearer ${user.token}`
+  //         }
+  //       })
+  //       .then((res) => res.data)
+  // });
+
+  // const mutation = useMutaion({})
 
   if (resultData) {
     let filtered = null;

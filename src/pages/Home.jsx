@@ -2,10 +2,12 @@ import React, { useContext } from "react";
 import { BrowserRouter, useNavigate } from "react-router-dom";
 import { useStore } from "zustand";
 import { UserContext } from "../context/UserContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Home = () => {
   const navigate = useNavigate();
-  const { user } = useContext(UserContext);
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData("users");
 
   const handleButtonClick = () => {
     if (user.success === false) {
@@ -34,9 +36,7 @@ const Home = () => {
           <p>팀 내에서 자신과 동료들의 성격을 이해하고 협의할 수 있는 방법을 배워보세요.</p>
         </section>
       </div>
-      <button onClick={handleButtonClick} className="text-center p-4 border border-sky-500 w-1/5 rounded-2xl">
-        내 성격 알아보러 가기
-      </button>
+      <button className="text-center p-4 border border-sky-500 w-1/5 rounded-2xl">내 성격 알아보러 가기</button>
     </div>
   );
 };

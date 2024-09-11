@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import Router from "./shared/Router";
-import { UserProvider } from "./context/UserContext";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Profile from "./pages/Profile";
+const queryClient = new QueryClient();
 const App = () => {
   return (
-    <UserProvider>
+    <QueryClientProvider client={queryClient}>
       <Router />
-    </UserProvider>
+    </QueryClientProvider>
   );
 };
 

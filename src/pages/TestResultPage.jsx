@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { deleteTestResult, getTestResults, updateTestResultVisibility } from "../api/testResults";
 import { mbtiTypes } from "../data/mbtiTypes";
 import { StyledButton } from "../components/ui/StyledButton";
 import { format } from "date-fns";
-import useStore from "../data/store";
-import { UserContext } from "../context/UserContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 const TestResultPage = () => {
   const [testResults, setTestResults] = useState([]);
-  const { user } = useContext(UserContext);
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueriesData("users");
 
   useEffect(() => {
     const fetchTestResults = async () => {
