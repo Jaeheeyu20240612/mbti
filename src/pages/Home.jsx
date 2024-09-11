@@ -36,7 +36,10 @@ const Home = () => {
           <p>팀 내에서 자신과 동료들의 성격을 이해하고 협의할 수 있는 방법을 배워보세요.</p>
         </section>
       </div>
-      <button className="text-center p-4 border border-sky-500 w-1/5 rounded-2xl">내 성격 알아보러 가기</button>
+      <button className="text-center p-4 border border-sky-500 w-1/5 rounded-2xl" onClick={handleButtonClick}>
+        {" "}
+        내 성격 알아보러 가기
+      </button>
     </div>
   );
 };

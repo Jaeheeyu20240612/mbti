@@ -18,8 +18,6 @@ export const Layout = () => {
     }
   };
 
-  console.log(userData);
-
   return (
     <div>
       <header>
